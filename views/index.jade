@@ -1,11 +1,13 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    title My Website
-    link(rel="stylesheet", href="/public/stylesheets/styles.css")
-  body
-    h1 Welcome to Club House!
-    a(href="/users/signup") Sign Up
-    a(href="/users/login") Log in
+extends layout
 
+block content
+  doctype html
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      title My Website
+      link(rel="stylesheet", href="/public/stylesheets/styles.css")
+    body
+      h1 Welcome to Club House!
+      a(href="/users/signup") Sign Up
+      a(href="/users/login") Log in

@@ -2,6 +2,7 @@ const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcryptjs');
+const passport = require("passport");
 
 
 
@@ -64,7 +65,7 @@ exports.sign_up_post = [
                 try {
                     user.password = hashedPassword;
                     await user.save();
-                    res.redirect("/");
+                    res.redirect("/users/login");
                 } catch (err) {
                     return next(err);
                 };
@@ -72,3 +73,57 @@ exports.sign_up_post = [
         }
     })
 ];
+
+//login page
+exports.log_in_get = asyncHandler((req, res, next) => {
+    res.render('log_in_form', { title: 'Log in' });
+});
+
+exports.log_in_post = passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/users/login",
+    failureMessage: true
+});
+
+exports.log_out_get = asyncHandler((req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    });
+})
+
+// Upgrade page
+exports.upgrade_form_get = asyncHandler((req, res, next) => {
+    res.render('upgrade_form', { title: 'Upgrade your account' })
+})
+
+exports.upgrade_form_post = [
+    body('upgrade_password')
+        .trim()
+        .custom((value) => {
+            if (value !== process.env.UPGRADE_PASSWORD) {
+                throw new Error('Wrong');
+            } else {
+                return true;
+            }
+        }),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.render('upgrade_form', {
+                title: 'Upgrade your account',
+                errors: errors.array(),
+            });
+            return;
+        } else {
+            const user = req.user;
+            await User.findOneAndUpdate({ _id: user._id }, { membership: true });
+            // Exclude rendering 'upgrade_confirm'
+            res.send('Upgrade successful.'); // Example response, change this as needed
+        }
+    })
+];
+
