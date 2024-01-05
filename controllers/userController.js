@@ -1,3 +1,4 @@
+require('dotenv').config()
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
@@ -103,7 +104,7 @@ exports.upgrade_form_post = [
     body('upgrade_password')
         .trim()
         .custom((value) => {
-            if (value !== process.env.UPGRADE_PASSWORD) {
+            if (value !== "hello") {
                 throw new Error('Wrong');
             } else {
                 return true;
