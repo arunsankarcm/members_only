@@ -81,7 +81,7 @@ exports.log_in_get = asyncHandler((req, res, next) => {
 });
 
 exports.log_in_post = passport.authenticate("local", {
-    successRedirect: "/",
+    successRedirect: "/message/list",
     failureRedirect: "/users/login",
     failureMessage: true
 });
@@ -122,9 +122,9 @@ exports.upgrade_form_post = [
         } else {
             const user = req.user;
             await User.findOneAndUpdate({ _id: user._id }, { membership: true });
-            // Exclude rendering 'upgrade_confirm'
-            res.send('Upgrade successful.'); // Example response, change this as needed
+            res.redirect('/message/list'); 
         }
     })
 ];
+
 

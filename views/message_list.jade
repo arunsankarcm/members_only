@@ -1,15 +1,36 @@
-doctype html
-html
-  head
-    title Messaging App
-  body
+extends layout
+
+block content
+  - if (currentUser) 
     header
       nav
         ul
-          li
-            a(href="/users/upgrade") Upgrade Account
+          - if (currentUser.membership === false)
+            li
+              a(href="/users/upgrade") Upgrade Account
           li
             a(href="/users/logout") Logout
-    main
-        p
-          a(href="/message/new") Create Message
+    
+    div.background
+      div.message-display_outer
+        div.messages-display
+          if (messages.length === 0)
+            div No message yet. Be the first! 
+          else
+            each message in messages
+              div.message-container
+                if (currentUser && currentUser.membership === true)
+                  form(method='POST' action='/message/delete')
+                    input#messageid(type='hidden' name='messageid' required='true' value=message._id)
+                    button.delete_button(type='submit') -
+                div.message_title #[strong #{message.title}]
+                div.message_text= message.text 
+                if (currentUser && currentUser.membership === true)
+                  div.message_timestamp posted by #{message.author.username}
+                    if (message.author.membership === true)
+                      |🌟
+                    |  on #{message.timestamp_formatted}
+    a.new-message_link(href='/message/new') New message
+
+  - else
+    p Please login to view messages.

@@ -39,8 +39,38 @@ exports.new_message_post = [
             return;
         } else {
             await message.save();
-            res.redirect('/');
+            res.redirect('/message/list');
         }
     })
 ]
 
+// Homepage, messages list
+exports.message_list_get = asyncHandler(async (req, res, next) => {
+    try {
+        const messages = await Message.find({})
+            .sort({ timestamp: -1 })
+            .populate('author')
+            .exec();
+
+        res.render('message_list', { messages });
+    } catch (err) {
+        res.status(500).send('Error fetching messages');
+    }
+});
+
+
+exports.message_delete_post = asyncHandler(async (req, res, next) => {
+    try {
+        const message = await Message.findById(req.body.messageid).exec();
+        if (message === null) {
+            res.redirect('/message/list');
+        } else {
+            await Message.findOneAndDelete({ _id: req.body.messageid });
+            res.redirect('/message/list');
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        console.error(error);
+        res.status(500).send('Error deleting message');
+    }
+});
