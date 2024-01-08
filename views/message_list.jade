@@ -25,8 +25,7 @@ block content
                     button.delete_button(type='submit') -
                 div.message_title #[strong #{message.title}]
                 div.message_text= message.text 
-                if (currentUser && currentUser.membership === true)
-                  div.message_timestamp posted by #{message.author.username}
+                div.message_timestamp posted by #{message.author.username}
                     if (message.author.membership === true)
                       |🌟
                     |  on #{message.timestamp_formatted}
